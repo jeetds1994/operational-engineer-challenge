@@ -14,6 +14,44 @@ Test Suite for Accounting
 #######################################################
 """
 
+class TestIntervalByDateQuery(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+
+        cls.policy = Policy('Test Policy', date(2015, 1, 1), 1200)
+        db.session.add(cls.policy)
+        db.session.commit()
+
+        cls.invoice_1 = Invoice(cls.policy.id, date(2015, 1, 1), date(2015, 1, 15), date(2015, 2, 1), 50)
+        cls.invoice_2 = Invoice(cls.policy.id, date(2015, 3, 1), date(2015, 3, 1), date(2015, 2, 1), 20)
+        db.session.add(cls.invoice_1)
+        db.session.add(cls.invoice_2)
+        db.session.commit()
+
+    @classmethod
+    def tearDownClass(cls):
+        db.session.delete(cls.policy)
+        db.session.delete(cls.invoice_1)
+        db.session.delete(cls.invoice_2)
+        db.session.commit()
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        for invoice in self.policy.invoices:
+            db.session.delete(invoice)
+        db.session.commit()
+
+    def test_annual_billing_schedule(self):
+        pa = PolicyAccounting(self.policy.id)
+        invoices_from_query = pa.get_invoices_by_date(date(2015, 1, 1), date(2015, 2, 1))
+        self.assertEquals(len(invoices_from_query), 1)
+        self.assertEquals(invoices_from_query [0].amount_due, 50)
+
+
+
 class TestBillingSchedules(unittest.TestCase):
 
     @classmethod
