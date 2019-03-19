@@ -14,7 +14,7 @@ This is the base code for the engineer project.
 
 class PolicyAccounting(object):
     """
-     Each policy has its own instance of accounting.
+        Each policy has its own instance of accounting.
     """
     def __init__(self, policy_id):
         self.policy = Policy.query.filter_by(id=policy_id).one()
@@ -22,6 +22,10 @@ class PolicyAccounting(object):
         if not self.policy.invoices:
             self.make_invoices()
 
+    """
+        Calculates the account balance at a given date by checking for over invoices and payments.
+        @Returns an integar represting balance.
+    """
     def return_account_balance(self, date_cursor=None):
         if not date_cursor:
             date_cursor = datetime.now().date()
@@ -42,13 +46,20 @@ class PolicyAccounting(object):
 
         return due_now
 
+    """
+        Retreive invoices between a range of dates. (Note: We retreive the latest if end date is not specified.)
+        @Returns list of Invoice
+    """
     def get_invoices_by_date(self, start_date, end_date=datetime.now().date()):
         return Invoice.query.filter_by(policy_id=self.policy.id)\
                                 .filter(Invoice.bill_date >= start_date)\
                                 .filter(Invoice.bill_date <= end_date)\
                                 .order_by(Invoice.bill_date)\
                                 .all()
-
+    """
+        Make payments at a date with a contact_id.
+        @Retuns instance of Payment created.
+    """
     def make_payment(self, contact_id=None, date_cursor=None, amount=0):
         if not date_cursor:
             date_cursor = datetime.now().date()
@@ -68,6 +79,9 @@ class PolicyAccounting(object):
 
         return payment
 
+    """
+        TODO: Implement function
+    """
     def evaluate_cancellation_pending_due_to_non_pay(self, date_cursor=None):
         """
          If this function returns true, an invoice
@@ -77,6 +91,9 @@ class PolicyAccounting(object):
         """
         pass
 
+    """
+        Determine if Policy still have outstanding balance.
+    """
     def evaluate_cancel(self, date_cursor=None):
         if not date_cursor:
             date_cursor = datetime.now().date()
@@ -95,7 +112,9 @@ class PolicyAccounting(object):
         else:
             print "THIS POLICY SHOULD NOT CANCEL"
 
-
+    """
+        Generates invoices for policy based on billing schedules.
+    """
     def make_invoices(self):
         for invoice in self.policy.invoices:
             invoice.delete()
