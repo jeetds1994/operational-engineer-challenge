@@ -22,6 +22,16 @@ class PolicyAccounting(object):
         if not self.policy.invoices:
             self.make_invoices()
 
+    def change_billing(self, new_billing_schedule):
+        self.policy.billing_schedule = new_billing_schedule
+
+        for invoice in self.policy.invoices:
+            invoice.deleted = 1
+
+        db.session.commit()
+
+        make_invoices(delete_existing_invoices=False)
+
     """
         Calculates the account balance at a given date by checking for over invoices and payments.
         @Returns an integar represting balance.
@@ -117,9 +127,10 @@ class PolicyAccounting(object):
     """
         Generates invoices for policy based on billing schedules.
     """
-    def make_invoices(self):
-        for invoice in self.policy.invoices:
-            invoice.delete()
+    def make_invoices(self, delete_existing_invoices=True):
+        if delete_existing_invoices:
+            for invoice in self.policy.invoices:
+                invoice.delete()
 
         billing_schedules = {'Annual': None, 'Semi-Annual': 3, 'Quarterly': 4, 'Monthly': 12}
 
