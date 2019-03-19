@@ -80,16 +80,18 @@ class PolicyAccounting(object):
         return payment
 
     """
-        TODO: Implement function
-    """
-    def evaluate_cancellation_pending_due_to_non_pay(self, date_cursor=None):
-        """
+
          If this function returns true, an invoice
          on a policy has passed the due date without
          being paid in full. However, it has not necessarily
          made it to the cancel_date yet.
-        """
-        pass
+    """
+    def evaluate_cancellation_pending_due_to_non_pay(self, date_cursor=datetime.now().date()):
+        invoice = Invoice.query.filter_by(policy_id=self.policy.id)\
+                                .filter(Invoice.due_date <= date_cursor)\
+                                .filter(Invoice.cancel_date >= date_cursor)\
+                                .first()
+        return bool(invoice)
 
     """
         Determine if Policy still have outstanding balance.
