@@ -42,6 +42,13 @@ class PolicyAccounting(object):
 
         return due_now
 
+    def get_invoices_by_date(self, start_date, end_date=datetime.now().date()):
+        return Invoice.query.filter_by(policy_id=self.policy.id)\
+                                .filter(Invoice.bill_date >= start_date)\
+                                .filter(Invoice.bill_date <= end_date)\
+                                .order_by(Invoice.bill_date)\
+                                .all()
+
     def make_payment(self, contact_id=None, date_cursor=None, amount=0):
         if not date_cursor:
             date_cursor = datetime.now().date()
@@ -137,7 +144,7 @@ class PolicyAccounting(object):
         db.session.commit()
 
 ################################
-# The functions below are for the db and 
+# The functions below are for the db and
 # shouldn't need to be edited.
 ################################
 def build_or_refresh_db():
@@ -194,4 +201,3 @@ def insert_data():
     payment_for_p2 = Payment(p2.id, anna_white.id, 400, date(2015, 2, 1))
     db.session.add(payment_for_p2)
     db.session.commit()
-
