@@ -14,6 +14,36 @@ Test Suite for Accounting
 #######################################################
 """
 
+class TestPolicyCancelation(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+
+        cls.policy = Policy('Test Policy', date(2015, 1, 1), 1200)
+        db.session.add(cls.policy)
+        db.session.commit()
+
+    @classmethod
+    def tearDownClass(cls):
+        db.session.delete(cls.policy)
+        db.session.commit()
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        for invoice in self.policy.invoices:
+            db.session.delete(invoice)
+        db.session.commit()
+
+    def test_cancel_policy(self):
+        pa = PolicyAccounting(self.policy.id)
+        canceled = pa.cancel_policy(date(2015, 1, 17), "Test Cancel")
+        self.assertEquals(canceled, True)
+        self.assertEquals(self.policy.cancelation_date, date(2015, 1, 17))
+        self.assertEquals(self.policy.status, "Canceled")
+        self.assertEquals(self.policy.cancel_description, "Test Cancel")
+
 class TestEvaluatePolicyPendingCancelation(unittest.TestCase):
 
     @classmethod

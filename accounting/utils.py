@@ -103,6 +103,19 @@ class PolicyAccounting(object):
                                 .first()
         return bool(invoice)
 
+    def cancel_policy(self, cancelation_date=datetime.now().date(), cancel_description=""):
+        if self.evaluate_cancel():
+            self.policy.status = "Canceled"
+            self.policy.cancelation_date = cancelation_date
+            self.policy.cancel_description = cancel_description
+            db.session.commit()
+            print("Policy canceled")
+            return True
+        else:
+            print("Policy can't be canceled due to balance.")
+        return False
+
+
     """
         Determine if Policy still have outstanding balance.
     """
@@ -114,15 +127,18 @@ class PolicyAccounting(object):
                                 .filter(Invoice.cancel_date <= date_cursor)\
                                 .order_by(Invoice.bill_date)\
                                 .all()
-
+        can_cancel = False
         for invoice in invoices:
             if not self.return_account_balance(invoice.cancel_date):
                 continue
             else:
+                can_cancel = True
                 print "THIS POLICY SHOULD HAVE CANCELED"
                 break
         else:
             print "THIS POLICY SHOULD NOT CANCEL"
+
+        return can_cancel
 
     """
         Generates invoices for policy based on billing schedules.
