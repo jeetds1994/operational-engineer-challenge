@@ -2,8 +2,10 @@
 
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
+from functools import wraps
 
 from accounting import db
+from flask import jsonify
 from models import Contact, Invoice, Payment, Policy
 
 """
@@ -249,3 +251,15 @@ def insert_data():
     payment_for_p2 = Payment(p2.id, anna_white.id, 400, date(2015, 2, 1))
     db.session.add(payment_for_p2)
     db.session.commit()
+
+def validate_headers(request, expected_headers):
+    def wrapper(func):
+        @wraps(func)
+        def decorated_function(*args, **kwargs):
+            for header in expected_headers:
+                #I am aware this does not validate the field type or content
+                if header not in request.args or len(request.args.get(header)) is 0:
+                    return jsonify(msg='Bad request'), 403
+            return func(*args, **kwargs)
+        return decorated_function
+    return wrapper

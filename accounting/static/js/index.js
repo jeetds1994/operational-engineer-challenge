@@ -2,12 +2,9 @@
 function HomeViewModel() {
   this.invoices = ko.observableArray([]);
   this.policy = ko.observableArray([]);
-  this.invoice_date = ko.observable("2015-02-01");
-  this.policy_number = ko.observable("")
+  this.invoice_date = ko.observable().extend({ date: true });
+  this.policy_number = ko.observable().extend({ number: true });
   this.onSubmit = function() {
-    if (!this.policy_number()) {
-      alert("Must enter policy number")
-    }
     this.policy.removeAll()
     this.invoices.removeAll()
     loadPolicyTable(this.policy_number(), this.policy)
@@ -74,7 +71,3 @@ function loadInvoiceTable(policyId, invoiceDate, invoices) {
   })
 }
 ko.applyBindings(new HomeViewModel());
-
-$(document).ready(function () {
-  //ko.applyBindings(new HomeViewModel());
-});

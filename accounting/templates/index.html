@@ -24,11 +24,11 @@
   <br>
   <form data-bind="submit: onSubmit">
     Policy Number:<br>
-    <input data-bind="value: policy_number" class="form-control" type="number" placeholder="Enter Policy Number Ex: 1">
+    <input data-bind="value: policy_number" class="form-control" type="number" placeholder="Enter Policy Number Ex: 1" required>
     <br>
     Invoice Due Date:<br>
      <input data-bind="value: invoice_date"class="form-control" type="date" name="date"
-          min="1973-01-01" max="2030-12-31">
+          min="1973-01-01" max="2030-12-31" required>
      <br>
      <input class="form-control" type="submit"/>
      <br><br>

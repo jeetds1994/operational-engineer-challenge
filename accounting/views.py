@@ -9,6 +9,8 @@ from accounting import app, db
 # Import our models
 from models import Contact, Invoice, Policy, policy_schema, invoices_schema
 
+from utils import validate_headers
+
 CORS(app)
 
 # Routing for the server.
@@ -23,6 +25,7 @@ def policy(policy_id):
     return policy_schema.jsonify(policy)
 
 @app.route("/invoice")
+@validate_headers(request, ["policyId", "invoiceDate"])
 def invoices():
     q = Invoice.query
 
