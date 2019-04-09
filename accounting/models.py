@@ -1,4 +1,9 @@
 from accounting import db
+from flask import Flask
+from flask_marshmallow import Marshmallow
+app = Flask(__name__)
+ma = Marshmallow(app)
+
 # from sqlalchemy.ext.declarative import declarative_base
 #
 # DeclarativeBase = declarative_base()
@@ -26,6 +31,16 @@ class Policy(db.Model):
         self.annual_premium = annual_premium
 
     invoices = db.relation('Invoice', primaryjoin="Invoice.policy_id==Policy.id")
+
+
+class PolicySchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('id', 'policy_number', 'effective_date', 'status', 'billing_schedule', 'annual_premium', 'named_insured', 'agent', 'policy_cancelation_description', 'cancelation_date')
+
+
+policy_schema = PolicySchema()
+policies_schema = PolicySchema(many=True)
 
 
 class Contact(db.Model):
@@ -63,6 +78,14 @@ class Invoice(db.Model):
         self.due_date = due_date
         self.cancel_date = cancel_date
         self.amount_due = amount_due
+
+class InvoiceSchema(ma.Schema):
+    class Meta:
+        # Fields to expose
+        fields = ('id', 'policy_id', 'bill_date', 'due_date', 'cancel_date', 'amount_due', 'deleted')
+
+
+invoices_schema = InvoiceSchema(many=True)
 
 
 class Payment(db.Model):

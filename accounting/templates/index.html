@@ -5,11 +5,90 @@
   <title>Some sort of title?</title>
   <meta name="description" content="What is this?">
   <meta name="author" content="Who?">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="../static/js/knockout.js"></script>
+  <link rel="stylesheet" type="text/css" href="../static/css/index.css" />
+
+
   <!--[if lt IE 9]>
 <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
 </head>
 <body>
-    <p>Your server is working.</p>
+  <h1>Welcome!</h1>
+  <h5>Here you can search for your policies and invoices!</h5>
+  <h5>Start by entering a policy number and selecting a date!</h5>
+  <br>
+  <form data-bind="submit: onSubmit">
+    Policy Number:<br>
+    <input data-bind="value: policy_number" class="form-control" type="number" placeholder="Enter Policy Number Ex: 1">
+    <br>
+    Invoice Due Date:<br>
+     <input data-bind="value: invoice_date"class="form-control" type="date" name="date"
+          min="1973-01-01" max="2030-12-31">
+     <br>
+     <input class="form-control" type="submit"/>
+     <br><br>
+
+  </form>
+
+  <div>
+  <table class="policyTable table">
+    <thead>
+      <tr>
+        <th scope="col">Policy Number</th>
+        <th scope="col">Effective Date</th>
+        <th scope="col">Status</th>
+        <th scope="col">Billing Schedule</th>
+        <th scope="col">Annual Premium</th>
+        <th scope="col">Insured Agent</th>
+        <th scope="col">Cancelation Description</th>
+        <th scope="col">Cancelation Date</th>
+      </tr>
+    </thead>
+    <tbody data-bind="foreach: policy">
+      <tr>
+        <td data-bind="text: policy_number"></td>
+        <td data-bind="text: effective_date"></td>
+        <td data-bind="text: status"></td>
+        <td data-bind="text: billing_schedule"></td>
+        <td data-bind="text: annual_premium"></td>
+        <td data-bind="text: named_insured"></td>
+        <td data-bind="text: policy_cancelation_description"></td>
+        <td data-bind="text: cancelation_date"></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div>
+  <table class="invoiceTable table">
+    <thead>
+      <tr>
+        <th scope="col">Amount Due</th>
+        <th scope="col">Bill Date</th>
+        <th scope="col">Cancel Date</th>
+        <th scope="col">Deleted</th>
+        <th scope="col">Due Date</th>
+        <th scope="col">Policy ID</th>
+      </tr>
+    </thead>
+    <tbody data-bind="foreach: invoices">
+      <tr>
+        <td data-bind="text: amount_due"></td>
+        <td data-bind="text: bill_date"></td>
+        <td data-bind="text: cancel_date"></td>
+        <td data-bind="text: deleted"></td>
+        <td data-bind="text: due_date"></td>
+        <td data-bind="text: policy_id"></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+  <script src="../static/js/index.js"></script>
+
 </body>
 </html>
